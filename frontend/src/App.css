@@ -2206,19 +2206,75 @@ p.desktop-only {
   }
 
   .studio-top-actions {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
   }
 
   .add-customer-btn {
-    width: 100%;
-    min-height: 2.85rem;
-  }
-
-  .avatar-btn {
     width: 2.85rem;
     height: 2.85rem;
+    min-height: 2.85rem;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+
+  .add-customer-icon.mobile-only {
+    display: block !important;
+    font-size: 1.45rem;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .avatar-btn.logout-btn {
+    width: 2.85rem;
+    height: 2.85rem;
+    display: inline-grid;
+    place-items: center;
+  }
+
+  .logout-icon.mobile-only {
+    display: block !important;
+  }
+
+  .run-card-copy {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .mobile-date-field {
+    margin-top: 0.75rem;
+    display: grid !important;
+    gap: 0.35rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .mobile-date-field input,
+  .mobile-date-field input[type="date"] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    min-height: 2.85rem;
+    border: 1px solid var(--stroke);
+    border-radius: 14px;
+    padding: 0.55rem 0.7rem;
+    background: #fffaf5;
+    font-size: 16px;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   .studio-body {
@@ -2247,25 +2303,6 @@ p.desktop-only {
 
   .run-bloom {
     display: none;
-  }
-
-  .mobile-date-field {
-    margin-top: 0.75rem;
-    display: grid !important;
-    gap: 0.35rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--muted);
-  }
-
-  .mobile-date-field input {
-    width: 100%;
-    min-height: 2.85rem;
-    border: 1px solid var(--stroke);
-    border-radius: 14px;
-    padding: 0.65rem 0.8rem;
-    background: #fffaf5;
-    font-size: 16px;
   }
 
   .kpi-row {

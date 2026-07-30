@@ -382,11 +382,38 @@ export default function Dashboard() {
               type="button"
               className="btn primary add-customer-btn"
               onClick={() => setCustomerModal({ open: true, customer: null })}
+              aria-label="Add customer"
+              title="Add customer"
             >
-              + Add customer
+              <span className="add-customer-label desktop-only">+ Add customer</span>
+              <span className="add-customer-icon mobile-only" aria-hidden="true">
+                +
+              </span>
             </button>
-            <button type="button" className="avatar-btn" onClick={logout} title="Logout">
-              {initials(displayName)}
+            <button
+              type="button"
+              className="avatar-btn logout-btn"
+              onClick={logout}
+              aria-label="Logout"
+              title="Logout"
+            >
+              <span className="logout-initials desktop-only">{initials(displayName)}</span>
+              <svg
+                className="logout-icon mobile-only"
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
             </button>
           </div>
         </header>
