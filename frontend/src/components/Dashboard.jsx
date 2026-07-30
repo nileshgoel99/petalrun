@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   createCustomer,
-  getCustomerAreas,
   getCustomers,
   getDashboardStats,
   getTodayDeliveries,
@@ -207,10 +206,7 @@ export default function Dashboard() {
   const [deliveries, setDeliveries] = useState([]);
   const [allToday, setAllToday] = useState([]);
   const [customers, setCustomers] = useState([]);
-  const [areas, setAreas] = useState([]);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [areaFilter, setAreaFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [menuOpen, setMenuOpen] = useState(null);
@@ -224,26 +220,22 @@ export default function Dashboard() {
       const params = {
         date,
         ...(search ? { search } : {}),
-        ...(statusFilter ? { status: statusFilter } : {}),
-        ...(areaFilter ? { area: areaFilter } : {}),
       };
-      const [statsData, deliveryData, areaData, unfiltered] = await Promise.all([
+      const [statsData, deliveryData, unfiltered] = await Promise.all([
         getDashboardStats(date),
         getTodayDeliveries(params),
-        getCustomerAreas(),
         getTodayDeliveries({ date }),
       ]);
       setStats(statsData);
       setDeliveries(deliveryData.results || []);
       setAllToday(unfiltered.results || []);
-      setAreas(areaData || []);
     } catch (err) {
       console.error(err);
       setError("Unable to reach the Fleurish API. Is the Django server running?");
     } finally {
       setLoading(false);
     }
-  }, [date, search, statusFilter, areaFilter]);
+  }, [date, search]);
 
   const loadCustomers = useCallback(async () => {
     setLoading(true);
@@ -251,21 +243,16 @@ export default function Dashboard() {
     try {
       const params = {
         ...(search ? { search } : {}),
-        ...(areaFilter ? { area: areaFilter } : {}),
       };
-      const [customerData, areaData] = await Promise.all([
-        getCustomers(params),
-        getCustomerAreas(),
-      ]);
+      const customerData = await getCustomers(params);
       setCustomers(customerData);
-      setAreas(areaData);
     } catch (err) {
       console.error(err);
       setError("Unable to load customers.");
     } finally {
       setLoading(false);
     }
-  }, [search, areaFilter]);
+  }, [search]);
 
   useEffect(() => {
     if (view === "dashboard") {
@@ -291,16 +278,6 @@ export default function Dashboard() {
     await updateDeliveryStatus(id, payload);
     setMenuOpen(null);
     await loadDashboard();
-  };
-
-  const optimizeRoute = () => {
-    setDeliveries((prev) =>
-      [...prev].sort((a, b) => {
-        const area = (a.area || "").localeCompare(b.area || "");
-        if (area !== 0) return area;
-        return (a.customer_name || "").localeCompare(b.customer_name || "");
-      })
-    );
   };
 
   const displayName = user?.first_name || user?.username || "Studio";
@@ -480,29 +457,6 @@ export default function Dashboard() {
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
                         />
-                        <select
-                          value={statusFilter}
-                          onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                          <option value="">All statuses</option>
-                          <option value="pending">Pending</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="not_delivered">Not delivered</option>
-                        </select>
-                        <select
-                          value={areaFilter}
-                          onChange={(e) => setAreaFilter(e.target.value)}
-                        >
-                          <option value="">All areas</option>
-                          {areas.map((a) => (
-                            <option key={a} value={a}>
-                              {a}
-                            </option>
-                          ))}
-                        </select>
-                        <button type="button" className="btn ghost" onClick={optimizeRoute}>
-                          Optimize route
-                        </button>
                       </div>
                     </div>
 
@@ -686,17 +640,6 @@ export default function Dashboard() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                       />
-                      <select
-                        value={areaFilter}
-                        onChange={(e) => setAreaFilter(e.target.value)}
-                      >
-                        <option value="">All areas</option>
-                        {areas.map((a) => (
-                          <option key={a} value={a}>
-                            {a}
-                          </option>
-                        ))}
-                      </select>
                       <button
                         type="button"
                         className="btn primary"
