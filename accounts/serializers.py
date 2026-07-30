@@ -113,10 +113,14 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        user = authenticate(
-            username=attrs["username"],
-            password=attrs["password"],
-        )
+        raw_username = (attrs.get("username") or "").strip()
+        password = attrs.get("password") or ""
+
+        # Treat admin / Admin (and any casing) as the same account.
+        existing = User.objects.filter(username__iexact=raw_username).first()
+        canonical = existing.username if existing else raw_username
+
+        user = authenticate(username=canonical, password=password)
         if not user:
             raise serializers.ValidationError("Invalid username or password.")
         if not user.is_active:
