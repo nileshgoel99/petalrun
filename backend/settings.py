@@ -2,15 +2,26 @@
 Django settings for Fleurish & Co. florist delivery management.
 """
 
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-3bidi67py7tvyimd4m&71-d(xa_f_5&+4_fyhi4w+gz4a*rgzi"
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-3bidi67py7tvyimd4m&71-d(xa_f_5&+4_fyhi4w+gz4a*rgzi",
+)
 
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "0") == "1"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    h.strip()
+    for h in os.environ.get(
+        "DJANGO_ALLOWED_HOSTS",
+        "petalrun.fabriflow.in,localhost,127.0.0.1",
+    ).split(",")
+    if h.strip()
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -75,7 +86,8 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/django-static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -102,3 +114,14 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get(
+        "DJANGO_CSRF_TRUSTED_ORIGINS",
+        "https://petalrun.fabriflow.in",
+    ).split(",")
+    if o.strip()
+]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
